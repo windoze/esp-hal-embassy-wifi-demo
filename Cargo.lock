@@ -544,6 +544,7 @@ dependencies = [
  "esp-metadata",
  "esp-riscv-rt",
  "esp-synopsys-usb-otg",
+ "esp32c6",
  "esp32s3",
  "fugit",
  "log",
@@ -551,6 +552,7 @@ dependencies = [
  "paste",
  "portable-atomic",
  "rand_core",
+ "riscv",
  "serde",
  "strum 0.26.3",
  "usb-device",
@@ -704,6 +706,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "551b510b3944844675fcefa1301b3610fe56faa419bcc05dd0dd0056745c6654"
 dependencies = [
  "anyhow",
+]
+
+[[package]]
+name = "esp32c6"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4e0882eca9c324ed2fef978ca9dc8e705114fb9fdcd5039be2075f4ae08d3246"
+dependencies = [
+ "critical-section",
+ "vcell",
 ]
 
 [[package]]
