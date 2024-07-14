@@ -577,6 +577,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "esp-hal-embassy-wifi-demo"
+version = "0.1.0"
+dependencies = [
+ "embassy-executor",
+ "embassy-futures",
+ "embassy-net",
+ "embassy-time",
+ "embassy-time-driver",
+ "embedded-io",
+ "embedded-io-async",
+ "embedded-svc",
+ "esp-alloc",
+ "esp-backtrace",
+ "esp-hal",
+ "esp-hal-embassy",
+ "esp-println",
+ "esp-wifi",
+ "heapless",
+ "log",
+ "smoltcp",
+ "static_cell",
+]
+
+[[package]]
 name = "esp-hal-procmacros"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -637,30 +661,6 @@ dependencies = [
  "ral-registers",
  "usb-device",
  "vcell",
-]
-
-[[package]]
-name = "esp-test1"
-version = "0.1.0"
-dependencies = [
- "embassy-executor",
- "embassy-futures",
- "embassy-net",
- "embassy-time",
- "embassy-time-driver",
- "embedded-io",
- "embedded-io-async",
- "embedded-svc",
- "esp-alloc",
- "esp-backtrace",
- "esp-hal",
- "esp-hal-embassy",
- "esp-println",
- "esp-wifi",
- "heapless",
- "log",
- "smoltcp",
- "static_cell",
 ]
 
 [[package]]

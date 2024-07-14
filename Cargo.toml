@@ -1,5 +1,5 @@
 [package]
-name = "esp-test1"
+name = "esp-hal-embassy-wifi-demo"
 version = "0.1.0"
 authors = ["Chen Xu <windoze@0d0a.com>"]
 edition = "2021"
