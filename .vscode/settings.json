@@ -5,5 +5,13 @@
     "editor.formatOnSave": true
   },
   "rust-analyzer.check.allTargets": false,
-  "cSpell.words": ["dhcpv", "riscv", "systimer", "timg", "Uninit", "xtensa"]
+  "cSpell.words": [
+    "dhcpv",
+    "riscv",
+    "smartled",
+    "systimer",
+    "timg",
+    "Uninit",
+    "xtensa"
+  ]
 }

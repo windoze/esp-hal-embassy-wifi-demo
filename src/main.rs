@@ -8,11 +8,16 @@ use embassy_time::{Duration, Timer};
 use esp_backtrace as _;
 use esp_hal::timer::timg::TimerGroup;
 use esp_hal::{clock::ClockControl, peripherals::Peripherals, prelude::*, system::SystemControl};
+#[cfg(feature = "smartled")]
+use esp_hal::{gpio::Io, rmt::Rmt};
 use esp_println::println;
 use esp_wifi::wifi::{
     ClientConfiguration, Configuration, WifiController, WifiDevice, WifiEvent, WifiStaDevice,
     WifiState,
 };
+
+#[cfg(feature = "smartled")]
+use smart_leds::{colors::*, SmartLedsWrite};
 use static_cell::make_static;
 
 extern crate alloc;
@@ -41,6 +46,18 @@ async fn main(spawner: Spawner) -> ! {
     init_heap();
 
     esp_println::logger::init_logger_from_env();
+
+    #[cfg(feature = "smartled")]
+    let mut led = {
+        // Set GPIO0 as an output, and set its state high initially.
+        let io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
+        let rmt = Rmt::new(peripherals.RMT, 80.MHz(), &clocks, None).unwrap();
+        use esp_hal_smartled::{smartLedBuffer, SmartLedsAdapter};
+        let rmt_buffer = smartLedBuffer!(1);
+        SmartLedsAdapter::new(rmt.channel0, io.pins.gpio35, rmt_buffer, &clocks)
+    };
+    #[cfg(feature = "smartled")]
+    led.write([RED; 1]).unwrap();
 
     #[cfg(target_arch = "xtensa")]
     let timer = esp_hal::timer::timg::TimerGroup::new(peripherals.TIMG1, &clocks, None).timer0;
@@ -86,6 +103,8 @@ async fn main(spawner: Spawner) -> ! {
         }
         Timer::after(Duration::from_millis(500)).await;
     }
+    #[cfg(feature = "smartled")]
+    led.write([PURPLE; 1]).unwrap();
 
     println!("Waiting to get IP address...");
     loop {
@@ -95,6 +114,8 @@ async fn main(spawner: Spawner) -> ! {
         }
         Timer::after(Duration::from_millis(500)).await;
     }
+    #[cfg(feature = "smartled")]
+    led.write([BLUE; 1]).unwrap();
 
     loop {
         Timer::after(Duration::from_millis(1_000)).await;
@@ -105,12 +126,16 @@ async fn main(spawner: Spawner) -> ! {
 
         let remote_endpoint = (Ipv4Address::new(142, 250, 185, 115), 80);
         println!("connecting...");
+        #[cfg(feature = "smartled")]
+        led.write([YELLOW; 1]).unwrap();
         let r = socket.connect(remote_endpoint).await;
         if let Err(e) = r {
             println!("connect error: {:?}", e);
             continue;
         }
         println!("connected!");
+        #[cfg(feature = "smartled")]
+        led.write([GREEN; 1]).unwrap();
         let mut buf = [0; 1024];
         loop {
             use embedded_io_async::Write;

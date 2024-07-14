@@ -53,7 +53,14 @@ smoltcp = { version = "0.11.0", default-features = false, features = [
 ] }
 static_cell = { version = "2.0.0", features = ["nightly"] }
 
+# Time library for embedded targets with ease-of-use and performance first.
+fugit = "0.3"
+
+esp-hal-smartled = { version = "0.11", optional = true }
+smart-leds = { version = "0.4", optional = true }
+
 [features]
+# default = ["esp32s3", "smartled"]
 esp32s3 = [
     "esp-backtrace/esp32s3",
     "esp-hal/esp32s3",
@@ -68,6 +75,8 @@ esp32c6 = [
     "esp-println/esp32c6",
     "esp-wifi/esp32c6",
 ]
+
+smartled = ["esp-hal-smartled", "smart-leds"]
 
 [profile.dev]
 # Rust debug is too slow.
