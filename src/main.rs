@@ -7,16 +7,11 @@ use embassy_net::{tcp::TcpSocket, Config, Ipv4Address, Stack, StackResources};
 use embassy_time::{Duration, Timer};
 use esp_backtrace as _;
 use esp_hal::timer::timg::TimerGroup;
-use esp_hal::{
-    clock::ClockControl, delay::Delay, peripherals::Peripherals, prelude::*, system::SystemControl,
-};
+use esp_hal::{clock::ClockControl, peripherals::Peripherals, prelude::*, system::SystemControl};
 use esp_println::println;
-use esp_wifi::{
-    wifi::{
-        ClientConfiguration, Configuration, WifiController, WifiDevice, WifiEvent, WifiStaDevice,
-        WifiState,
-    },
-    EspWifiInitFor,
+use esp_wifi::wifi::{
+    ClientConfiguration, Configuration, WifiController, WifiDevice, WifiEvent, WifiStaDevice,
+    WifiState,
 };
 use static_cell::make_static;
 
@@ -42,9 +37,7 @@ const PASSWORD: &str = env!("WIFI_PASSWORD");
 async fn main(spawner: Spawner) -> ! {
     let peripherals = Peripherals::take();
     let system = SystemControl::new(peripherals.SYSTEM);
-
     let clocks = ClockControl::max(system.clock_control).freeze();
-    let delay = Delay::new(&clocks);
     init_heap();
 
     esp_println::logger::init_logger_from_env();
@@ -74,17 +67,15 @@ async fn main(spawner: Spawner) -> ! {
     let seed = 1234; // very random, very secure seed
 
     // Init network stack
-    let stack = &*make_static!(
-        Stack::new(
-            wifi_interface,
-            config,
-            make_static!(StackResources::<3>::new()),
-            seed
-        )
-    );
+    let stack = &*make_static!(Stack::new(
+        wifi_interface,
+        config,
+        make_static!(StackResources::<3>::new()),
+        seed
+    ));
 
     spawner.spawn(connection(controller)).ok();
-    spawner.spawn(net_task(&stack)).ok();
+    spawner.spawn(net_task(stack)).ok();
 
     let mut rx_buffer = [0; 4096];
     let mut tx_buffer = [0; 4096];
@@ -108,7 +99,7 @@ async fn main(spawner: Spawner) -> ! {
     loop {
         Timer::after(Duration::from_millis(1_000)).await;
 
-        let mut socket = TcpSocket::new(&stack, &mut rx_buffer, &mut tx_buffer);
+        let mut socket = TcpSocket::new(stack, &mut rx_buffer, &mut tx_buffer);
 
         socket.set_timeout(Some(embassy_time::Duration::from_secs(10)));
 
@@ -152,13 +143,10 @@ async fn connection(mut controller: WifiController<'static>) {
     println!("start connection task");
     println!("Device capabilities: {:?}", controller.get_capabilities());
     loop {
-        match esp_wifi::wifi::get_wifi_state() {
-            WifiState::StaConnected => {
-                // wait until we're no longer connected
-                controller.wait_for_event(WifiEvent::StaDisconnected).await;
-                Timer::after(Duration::from_millis(5000)).await
-            }
-            _ => {}
+        if let WifiState::StaConnected = esp_wifi::wifi::get_wifi_state() {
+            // wait until we're no longer connected
+            controller.wait_for_event(WifiEvent::StaDisconnected).await;
+            Timer::after(Duration::from_millis(5000)).await
         }
         if !matches!(controller.is_started(), Ok(true)) {
             let client_config = Configuration::Client(ClientConfiguration {
