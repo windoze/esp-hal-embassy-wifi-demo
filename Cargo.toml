@@ -15,7 +15,7 @@ esp-backtrace = { version = "0.13.0", features = [
 esp-hal = { version = "0.19.0", features = ["async"] }
 esp-hal-embassy = { version = "0.2.0", features = [] }
 esp-println = { version = "0.10.0", features = ["log"] }
-esp-wifi = { version = "0.7.0", features = [
+esp-wifi = { version = "0.7.1", features = [
     "phy-enable-usb",
     "utils",
     "wifi",
@@ -38,7 +38,7 @@ embedded-io-async = "0.6.1"
 embedded-svc = { version = "0.28.0", default-features = false, features = [] }
 fugit = "0.3"
 heapless = { version = "0.8.0", default-features = false }
-log = { version = "0.4.21" }
+log = { version = "0.4" }
 smoltcp = { version = "0.11.0", default-features = false, features = [
     "medium-ethernet",
     "proto-dhcpv4",
