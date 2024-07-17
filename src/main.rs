@@ -71,10 +71,7 @@ async fn main(spawner: Spawner) -> ! {
     #[cfg(feature = "smartled")]
     led.write([RED; 1]).unwrap();
 
-    #[cfg(target_arch = "xtensa")]
-    let timer = esp_hal::timer::timg::TimerGroup::new(peripherals.TIMG1, &clocks, None).timer0;
-    #[cfg(target_arch = "riscv32")]
-    let timer = esp_hal::timer::systimer::SystemTimer::new(peripherals.SYSTIMER).alarm0;
+    let timer = esp_hal::timer::timg::TimerGroup::new(peripherals.TIMG0, &clocks, None).timer0;
     let timer = PeriodicTimer::new(timer.into());
     let init = esp_wifi::initialize(
         esp_wifi::EspWifiInitFor::Wifi,
