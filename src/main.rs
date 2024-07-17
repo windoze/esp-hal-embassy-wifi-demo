@@ -6,8 +6,13 @@ use embassy_executor::Spawner;
 use embassy_net::{tcp::TcpSocket, Config, Ipv4Address, Stack, StackResources};
 use embassy_time::{Duration, Timer};
 use esp_backtrace as _;
-use esp_hal::timer::timg::TimerGroup;
-use esp_hal::{clock::ClockControl, peripherals::Peripherals, prelude::*, system::SystemControl};
+use esp_hal::{
+    clock::ClockControl,
+    peripherals::Peripherals,
+    prelude::*,
+    system::SystemControl,
+    timer::{OneShotTimer, PeriodicTimer},
+};
 #[cfg(feature = "smartled")]
 use esp_hal::{gpio::Io, rmt::Rmt};
 use esp_println::println;
@@ -63,6 +68,7 @@ async fn main(spawner: Spawner) -> ! {
     let timer = esp_hal::timer::timg::TimerGroup::new(peripherals.TIMG1, &clocks, None).timer0;
     #[cfg(target_arch = "riscv32")]
     let timer = esp_hal::timer::systimer::SystemTimer::new(peripherals.SYSTIMER).alarm0;
+    let timer = PeriodicTimer::new(timer.into());
     let init = esp_wifi::initialize(
         esp_wifi::EspWifiInitFor::Wifi,
         timer,
@@ -76,8 +82,11 @@ async fn main(spawner: Spawner) -> ! {
     let (wifi_interface, controller) =
         esp_wifi::wifi::new_with_mode(&init, wifi, WifiStaDevice).unwrap();
 
-    let timer_group0 = TimerGroup::new_async(peripherals.TIMG0, &clocks);
-    esp_hal_embassy::init(&clocks, timer_group0);
+    let systimer = esp_hal::timer::systimer::SystemTimer::new(peripherals.SYSTIMER);
+    esp_hal_embassy::init(
+        &clocks,
+        make_static!([OneShotTimer::new(systimer.alarm0.into())]),
+    );
 
     let config = Config::dhcpv4(Default::default());
 

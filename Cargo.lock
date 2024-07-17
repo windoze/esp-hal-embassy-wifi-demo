@@ -499,13 +499,12 @@ dependencies = [
 
 [[package]]
 name = "esp-backtrace"
-version = "0.12.1"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d5b1720f2275eb87dbde9607cb2ab6a10894a4502045c0924c0f265aaceb3118"
+checksum = "1a34817530dceba397172d6a9fb660b684a73a3a591fbe7fb0da27bed796f270"
 dependencies = [
  "esp-build",
  "esp-println",
- "rustversion",
  "semihosting",
 ]
 
@@ -522,13 +521,14 @@ dependencies = [
 
 [[package]]
 name = "esp-hal"
-version = "0.18.0"
+version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44f1bf3b1b34bbeb59e24e630f26e21b95f9c2bb7c0a53361ae5a97c67936566"
+checksum = "fe4f8cb6a9dcf0fd4506a856fbb4a0622b92042978c601a23c840c28f621a59f"
 dependencies = [
  "basic-toml",
  "bitfield",
  "bitflags 2.6.0",
+ "bytemuck",
  "cfg-if",
  "critical-section",
  "delegate",
@@ -569,9 +569,9 @@ dependencies = [
 
 [[package]]
 name = "esp-hal-embassy"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a892b9fe96cdfddab252ffa0ea90de66ccb078ff42d037b14ca9dfa3608b688a"
+checksum = "5206e4c63993df6da47fd30432ccc22111bd084ebfd0372afd45202b491e717e"
 dependencies = [
  "cfg-if",
  "critical-section",
@@ -613,9 +613,9 @@ dependencies = [
 
 [[package]]
 name = "esp-hal-procmacros"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "788b535b8127a8f0d1f40a8d8e300e57a8c361c492d660dd08fe8e9a1b96ee3c"
+checksum = "9569ccb286c5a0c39292dbaaa0995bbb2a2a9d671ef3ce807b8b5b3d9a589d35"
 dependencies = [
  "darling",
  "document-features",
@@ -630,9 +630,9 @@ dependencies = [
 
 [[package]]
 name = "esp-hal-smartled"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4984c06ebc6fba104636b91b06ad3070d9828d9a1f6407ca22cd4926d884f55c"
+checksum = "5599934a5f5abb43fd0a474b8fcccb090215d2e483751541c9d5c712ccb960c8"
 dependencies = [
  "document-features",
  "esp-hal",
@@ -642,9 +642,9 @@ dependencies = [
 
 [[package]]
 name = "esp-metadata"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "654b8f14bf076fe5995fe94fabbe41a98041e1f2f801e5b3404dcae87e476db6"
+checksum = "6013420eb303c3087d82c2d2a38944427662b0b07a9ae79e5b1636fc1442e0ba"
 dependencies = [
  "basic-toml",
  "lazy_static",
@@ -654,19 +654,21 @@ dependencies = [
 
 [[package]]
 name = "esp-println"
-version = "0.9.1"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e98f0f58453dd2ce08d99228fc8757fad39d05dfd26643665d1093b8844f42cc"
+checksum = "58cd4fa834980ba64aad00a5c2c1a630020af984eadef65a125cb99085f6f54c"
 dependencies = [
  "critical-section",
+ "esp-build",
  "log",
+ "portable-atomic",
 ]
 
 [[package]]
 name = "esp-riscv-rt"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "404129c79e9dc34f8b468ec44e71ce36a0bd443cb88be0feffa4b9f3856c97a6"
+checksum = "bfc32298ed7c263b06c8b031704d8517cc62c819f2a9d5c261d0cb119634d6e9"
 dependencies = [
  "document-features",
  "riscv",
@@ -688,9 +690,9 @@ dependencies = [
 
 [[package]]
 name = "esp-wifi"
-version = "0.6.0"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48709a955a7730ef27457682d4f3173d956ae7cd4182c46252a61bd2f61ace6c"
+checksum = "87071ea2e20ce3ea82cc16e050951fd0e7316111fef610f44bd474c06bbbad7f"
 dependencies = [
  "atomic-waker",
  "cfg-if",
@@ -722,18 +724,18 @@ dependencies = [
 
 [[package]]
 name = "esp-wifi-sys"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "551b510b3944844675fcefa1301b3610fe56faa419bcc05dd0dd0056745c6654"
+checksum = "1829bd8c63b22a6d8a5485203a6e6bdc008897d9ee687aa6df8b57d2103a48d2"
 dependencies = [
  "anyhow",
 ]
 
 [[package]]
 name = "esp32c6"
-version = "0.14.0"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e0882eca9c324ed2fef978ca9dc8e705114fb9fdcd5039be2075f4ae08d3246"
+checksum = "d5824acf92f8536c997e673113ce704c004f77e154fd550dc511b92d61bb34f6"
 dependencies = [
  "critical-section",
  "vcell",
@@ -741,9 +743,9 @@ dependencies = [
 
 [[package]]
 name = "esp32s3"
-version = "0.26.0"
+version = "0.27.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53ac7bb447c239be8a6a9eba9aaf4099c3aab4b7aefca5871be8bf7d8c8893cf"
+checksum = "7989c8d8e81a0b1037926ccaec6b2ff8bed36b758e6beb9145111ba33892fe6f"
 dependencies = [
  "critical-section",
  "vcell",
