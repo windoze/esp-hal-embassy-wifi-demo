@@ -63,13 +63,24 @@ async fn main(spawner: Spawner) -> ! {
     let mut led = {
         // Set GPIO0 as an output, and set its state high initially.
         let io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
+
+        // The pin number depends on the board you are using.
+        #[cfg(feature = "esp32s3")]
+        let pin = io.pins.gpio35;
+        #[cfg(feature = "esp32c6")]
+        let pin = {
+            // M5NanoC6 needs to set GPIO19 to high to enable the LED
+            esp_hal::gpio::Output::new(io.pins.gpio19, esp_hal::gpio::Level::High);
+            io.pins.gpio20
+        };
+
         let rmt = Rmt::new(peripherals.RMT, 80.MHz(), &clocks, None).unwrap();
         use esp_hal_smartled::{smartLedBuffer, SmartLedsAdapter};
         let rmt_buffer = smartLedBuffer!(1);
-        SmartLedsAdapter::new(rmt.channel0, io.pins.gpio35, rmt_buffer, &clocks)
+        let mut led = SmartLedsAdapter::new(rmt.channel0, pin, rmt_buffer, &clocks);
+        led.write([RED; 1]).unwrap();
+        led
     };
-    #[cfg(feature = "smartled")]
-    led.write([RED; 1]).unwrap();
 
     let timer = esp_hal::timer::timg::TimerGroup::new(peripherals.TIMG0, &clocks, None).timer0;
     let timer = PeriodicTimer::new(timer.into());
