@@ -118,6 +118,8 @@ async fn main(spawner: Spawner) -> ! {
     led.write([BLUE; 1]).unwrap();
 
     loop {
+        #[cfg(feature = "smartled")]
+        led.write([YELLOW; 1]).unwrap();
         Timer::after(Duration::from_millis(1_000)).await;
 
         let mut socket = TcpSocket::new(stack, &mut rx_buffer, &mut tx_buffer);
@@ -126,8 +128,6 @@ async fn main(spawner: Spawner) -> ! {
 
         let remote_endpoint = (Ipv4Address::new(142, 250, 185, 115), 80);
         println!("connecting...");
-        #[cfg(feature = "smartled")]
-        led.write([YELLOW; 1]).unwrap();
         let r = socket.connect(remote_endpoint).await;
         if let Err(e) = r {
             println!("connect error: {:?}", e);
