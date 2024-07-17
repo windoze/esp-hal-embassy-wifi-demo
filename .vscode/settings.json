@@ -7,7 +7,6 @@
   "rust-analyzer.check.allTargets": false,
   "rust-analyzer.cargo.target": "xtensa-esp32s3-none-elf",
   "rust-analyzer.cargo.features": ["esp32s3", "smartled"],
-  "rust-analyzer.diagnostics.disabled": ["unresolved-proc-macro"],
   "cSpell.words": [
     "dhcpv",
     "riscv",
