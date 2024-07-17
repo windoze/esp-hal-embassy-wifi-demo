@@ -5,6 +5,7 @@
     "editor.formatOnSave": true
   },
   "rust-analyzer.check.allTargets": false,
+  "rust-analyzer.cargo.features": ["esp32s3", "smartled"],
   "cSpell.words": [
     "dhcpv",
     "riscv",

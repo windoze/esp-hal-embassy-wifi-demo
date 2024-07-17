@@ -1,6 +1,5 @@
 #![no_std]
 #![no_main]
-#![feature(type_alias_impl_trait)]
 
 use embassy_executor::Spawner;
 use embassy_net::{tcp::TcpSocket, Config, Ipv4Address, Stack, StackResources};
@@ -11,7 +10,7 @@ use esp_hal::{
     peripherals::Peripherals,
     prelude::*,
     system::SystemControl,
-    timer::{OneShotTimer, PeriodicTimer},
+    timer::{ErasedTimer, OneShotTimer, PeriodicTimer},
 };
 #[cfg(feature = "smartled")]
 use esp_hal::{gpio::Io, rmt::Rmt};
@@ -20,10 +19,8 @@ use esp_wifi::wifi::{
     ClientConfiguration, Configuration, WifiController, WifiDevice, WifiEvent, WifiStaDevice,
     WifiState,
 };
-
 #[cfg(feature = "smartled")]
 use smart_leds::{colors::*, SmartLedsWrite};
-use static_cell::make_static;
 
 extern crate alloc;
 use core::mem::MaybeUninit;
@@ -42,6 +39,16 @@ fn init_heap() {
 
 const SSID: &str = env!("WIFI_SSID");
 const PASSWORD: &str = env!("WIFI_PASSWORD");
+
+// When you are okay with using a nightly compiler it's better to use https://docs.rs/static_cell/2.1.0/static_cell/macro.make_static.html
+macro_rules! mk_static {
+    ($t:ty,$val:expr) => {{
+        static STATIC_CELL: static_cell::StaticCell<$t> = static_cell::StaticCell::new();
+        #[deny(unused_attributes)]
+        let x = STATIC_CELL.uninit().write(($val));
+        x
+    }};
+}
 
 #[main]
 async fn main(spawner: Spawner) -> ! {
@@ -85,7 +92,10 @@ async fn main(spawner: Spawner) -> ! {
     let systimer = esp_hal::timer::systimer::SystemTimer::new(peripherals.SYSTIMER);
     esp_hal_embassy::init(
         &clocks,
-        make_static!([OneShotTimer::new(systimer.alarm0.into())]),
+        mk_static!(
+            [OneShotTimer<ErasedTimer>; 1],
+            [OneShotTimer::new(systimer.alarm0.into())]
+        ),
     );
 
     let config = Config::dhcpv4(Default::default());
@@ -93,12 +103,15 @@ async fn main(spawner: Spawner) -> ! {
     let seed = 1234; // very random, very secure seed
 
     // Init network stack
-    let stack = &*make_static!(Stack::new(
-        wifi_interface,
-        config,
-        make_static!(StackResources::<3>::new()),
-        seed
-    ));
+    let stack = &*mk_static!(
+        Stack<WifiDevice<'_, WifiStaDevice>>,
+        Stack::new(
+            wifi_interface,
+            config,
+            mk_static!(StackResources<3>, StackResources::<3>::new()),
+            seed
+        )
+    );
 
     spawner.spawn(connection(controller)).ok();
     spawner.spawn(net_task(stack)).ok();
